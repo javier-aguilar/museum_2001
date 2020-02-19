@@ -1,11 +1,12 @@
 class Museum
 
-  attr_reader :name, :exhibits, :patrons
+  attr_reader :name, :exhibits, :patrons, :patrons_of_exhibits
 
   def initialize(name_param)
     @name = name_param
     @exhibits = []
     @patrons = []
+    @patrons_of_exhibits = {}
   end
 
   def add_exhibit(exhibit)
@@ -23,6 +24,16 @@ class Museum
   end
 
   def admit(patron)
+    exhibits = recommend_exhibits(patron)
+    exhibits.each do | exhibit |
+      if patron.spending_money >= exhibit.cost
+        if !@patrons_of_exhibits.key? exhibit
+          @patrons_of_exhibits[exhibit] = [patron]
+        else
+          @patrons_of_exhibits[exhibit] << patron
+        end
+      end
+    end
     @patrons << patron
   end
 

@@ -14,48 +14,27 @@ class MuseumTest < Minitest::Test
     @dead_sea_scrolls = Exhibit.new({name: "Dead Sea Scrolls", cost: 10})
     @imax = Exhibit.new({name: "@imax",cost: 15})
 
+    @dmns.add_exhibit(@gems_and_minerals)
+    @dmns.add_exhibit(@dead_sea_scrolls)
+    @dmns.add_exhibit(@imax)
   end
 
   def test_it_exists
-    @dmns = Museum.new("Denver Museum of Nature and Science")
     assert_instance_of Museum, @dmns
   end
 
 
   def test_it_has_attributes
-    @dmns = Museum.new("Denver Museum of Nature and Science")
-
     assert_equal "Denver Museum of Nature and Science", @dmns.name
-    assert_equal [], @dmns.exhibits
   end
 
   def test_it_can_add_exhibits
-    @dmns = Museum.new("Denver Museum of Nature and Science")
-
-    @gems_and_minerals = Exhibit.new({name: "Gems and Minerals", cost: 0})
-    @dead_sea_scrolls = Exhibit.new({name: "Dead Sea Scrolls", cost: 10})
-    @imax = Exhibit.new({name: "@imax",cost: 15})
-
-    @dmns.add_exhibit(@gems_and_minerals)
-    @dmns.add_exhibit(@dead_sea_scrolls)
-    @dmns.add_exhibit(@imax)
-
     expected = [@gems_and_minerals, @dead_sea_scrolls, @imax]
 
     assert_equal expected, @dmns.exhibits
   end
 
   def test_it_can_recommend_exhibits
-    @dmns = Museum.new("Denver Museum of Nature and Science")
-
-    @gems_and_minerals = Exhibit.new({name: "Gems and Minerals", cost: 0})
-    @dead_sea_scrolls = Exhibit.new({name: "Dead Sea Scrolls", cost: 10})
-    @imax = Exhibit.new({name: "@imax",cost: 15})
-
-    @dmns.add_exhibit(@gems_and_minerals)
-    @dmns.add_exhibit(@dead_sea_scrolls)
-    @dmns.add_exhibit(@imax)
-
     patron1 = Patron.new("Bob", 20)
     patron1.add_interest("Dead Sea Scrolls")
     patron1.add_interest("Gems and Minerals")
@@ -68,10 +47,6 @@ class MuseumTest < Minitest::Test
   end
 
   def test_it_can_show_patrons_by_exhibit_interest
-    @dmns.add_exhibit(@gems_and_minerals)
-    @dmns.add_exhibit(@dead_sea_scrolls)
-    @dmns.add_exhibit(@imax)
-
     assert_equal [], @dmns.patrons
 
     patron1 = Patron.new("Bob", 0)
@@ -100,10 +75,6 @@ class MuseumTest < Minitest::Test
   end
 
   def test_it_can_show_ticket_lottery_contestants
-    @dmns.add_exhibit(@gems_and_minerals)
-    @dmns.add_exhibit(@dead_sea_scrolls)
-    @dmns.add_exhibit(@imax)
-
     assert_equal [], @dmns.patrons
 
     patron1 = Patron.new("Bob", 0)
@@ -125,10 +96,6 @@ class MuseumTest < Minitest::Test
   end
 
   def test_it_can_announce_lottery_winner
-    @dmns.add_exhibit(@gems_and_minerals)
-    @dmns.add_exhibit(@dead_sea_scrolls)
-    @dmns.add_exhibit(@imax)
-
     patron1 = Patron.new("Bob", 0)
     patron1.add_interest("Gems and Minerals")
     patron1.add_interest("Dead Sea Scrolls")
@@ -146,6 +113,43 @@ class MuseumTest < Minitest::Test
     @dmns.stubs(:draw_lottery_winner).returns(patron1)
 
     assert_equal patron1, @dmns.draw_lottery_winner(@dead_sea_scrolls)
+  end
+
+  def test_admit_based_on_spending_money
+    tj = Patron.new("TJ", 7)
+    tj.add_interest("IMAX")
+    tj.add_interest("Dead Sea Scrolls")
+    @dmns.admit(tj)
+    tj.spending_money
+
+    expected = {}
+    assert_equal expected, @dmns.patrons_of_exhibits
+
+
+    patron1 = Patron.new("Bob", 10)
+    patron1.add_interest("Dead Sea Scrolls")
+    patron1.add_interest("IMAX")
+    @dmns.admit(patron1)
+    patron1.spending_money
+
+    expected2 = {
+      @dead_sea_scrolls => [patron1]
+    }
+
+    assert_equal expected2, @dmns.patrons_of_exhibits
+
+    patron2 = Patron.new("Sally", 20)
+    patron2.add_interest("IMAX")
+    patron2.add_interest("Dead Sea Scrolls")
+    @dmns.admit(patron2)
+    patron2.spending_money
+
+    expected3 = {
+      @dead_sea_scrolls => [patron1],
+      @imax => [patron2]
+    }
+
+    assert_equal expected3, @dmns.patrons_of_exhibits
   end
 
 end
