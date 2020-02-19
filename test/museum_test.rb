@@ -119,7 +119,7 @@ class MuseumTest < Minitest::Test
     @dmns.admit(patron2)
     @dmns.admit(patron3)
 
-    assert_equal [], @dmns.ticket_lottery_contestants
+    assert_equal [patron1, patron3], @dmns.ticket_lottery_contestants
   end
 
   def it_can_announce_lottery_winner

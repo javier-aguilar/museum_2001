@@ -27,6 +27,7 @@ class Museum
   end
 
   def patrons_by_exhibit_interest
+    #there is probably an easier way...
     patrons_by_exhibit = {}
     @exhibits.each do | exhibit |
       if !patrons_by_exhibit.key? exhibit
@@ -43,6 +44,21 @@ class Museum
       end
     end
     patrons_by_exhibit
+  end
+
+  def ticket_lottery_contestants
+    lottery_users = []
+    patrons_by_exhibit_interest.each do | exhibit, patrons|
+      patrons.each do | patron |
+        if (patron.interests.include? exhibit.name)
+          if patron.spending_money < exhibit.cost
+            lottery_users << patron
+          end
+        end
+      end
+    end
+    # && (!lottery_users.include? patron)
+    lottery_users
   end
 
 end
