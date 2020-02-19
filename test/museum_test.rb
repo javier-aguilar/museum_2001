@@ -13,7 +13,6 @@ class MuseumTest < Minitest::Test
 
 
   def test_it_has_attributes
-    skip
     dmns = Museum.new("Denver Museum of Nature and Science")
 
     assert_equal "Denver Museum of Nature and Science", dmns.name
