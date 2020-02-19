@@ -46,11 +46,11 @@ class Museum
     patrons_by_exhibit
   end
 
-  def ticket_lottery_contestants
+  def ticket_lottery_contestants(exhibit_param)
     lottery_users = []
     patrons_by_exhibit_interest.each do | exhibit, patrons|
       patrons.each do | patron |
-        if (patron.interests.include? exhibit.name)
+        if (patron.interests.include? exhibit_param.name)
           if patron.spending_money < exhibit.cost
             lottery_users << patron
           end
