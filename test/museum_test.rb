@@ -3,6 +3,7 @@ require 'minitest/pride'
 require './lib/exhibit'
 require './lib/patron'
 require './lib/museum'
+require 'mocha/minitest'
 
 class MuseumTest < Minitest::Test
 
@@ -121,11 +122,30 @@ class MuseumTest < Minitest::Test
 
     assert_equal [patron1, patron3], @dmns.ticket_lottery_contestants(@dead_sea_scrolls)
     assert_equal [], @dmns.ticket_lottery_contestants(@imax)
-
   end
 
-  def it_can_announce_lottery_winner
-    skip
+  def test_it_can_announce_lottery_winner
+    @dmns.add_exhibit(@gems_and_minerals)
+    @dmns.add_exhibit(@dead_sea_scrolls)
+    @dmns.add_exhibit(@imax)
+
+    patron1 = Patron.new("Bob", 0)
+    patron1.add_interest("Gems and Minerals")
+    patron1.add_interest("Dead Sea Scrolls")
+
+    patron2 = Patron.new("Sally", 20)
+    patron2.add_interest("Dead Sea Scrolls")
+
+    patron3 = Patron.new("Johnny", 5)
+    patron3.add_interest("Dead Sea Scrolls")
+
+    @dmns.admit(patron1)
+    @dmns.admit(patron2)
+    @dmns.admit(patron3)
+
+    @dmns.stubs(:draw_lottery_winner).returns(patron1)
+
+    assert_equal patron1, @dmns.draw_lottery_winner(@dead_sea_scrolls)
   end
 
 end

@@ -61,4 +61,9 @@ class Museum
     lottery_users
   end
 
+  def draw_lottery_winner(exhibit_param)
+    winner = ticket_lottery_contestants(exhibit_param).sample
+    winner
+  end
+
 end
