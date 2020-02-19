@@ -18,7 +18,6 @@ class PatronTest < Minitest::Test
   end
 
   def test_it_can_add_interests
-    skip
     patron1 = Patron.new("Bob", 20)
     assert_equal [], patron1.interests
 
